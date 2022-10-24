@@ -1,9 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"expo/controller"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	fmt.Print(22222)
+	router := gin.Default()
+
+	router.POST("/todo",controller.RegistTodo)
+	router.Run(":8080")
 }
