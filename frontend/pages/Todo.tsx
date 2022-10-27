@@ -1,13 +1,23 @@
-import React,{ useState } from "react"
+
+import axios from "axios"
+import React,{ useEffect, useState } from "react"
 import { Button, SafeAreaView, StyleSheet, Text, TextInput } from "react-native"
+
+type TypeTodo = {
+  text:string
+}
 
 export const Todo = () => {
   const [text, setText] = useState<string>("")
-  const [todos, setTodos] = useState<string[]>([])
+  const [todos, setTodos] = useState<TypeTodo[]>([])
   const handleSubmit = () => {
+    const url = "http://127.0.0.1:8080/todo"
     const entityTodos = todos
-    entityTodos.push(text)
+    entityTodos.push({ text })
     setTodos(entityTodos)
+    axios.post(url, {
+      text
+    })
     setText("")
   }
   const styles = StyleSheet.create({
@@ -18,6 +28,14 @@ export const Todo = () => {
       justifyContent: "center",
     },
   })
+
+  useEffect(() => {
+    const url = "http://127.0.0.1:8080/todo"
+    axios.get(url)
+      .then((res) => {
+        setTodos(res.data)
+      })
+  },[])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -35,7 +53,7 @@ export const Todo = () => {
       {todos.map((todo, index) => {
         return (
           <Text key={index}>
-            {index}:{todo}
+            {index}:{todo.text}
           </Text>
         )
       })}
