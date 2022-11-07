@@ -1,6 +1,6 @@
 
 import { useEffect } from "react"
-import {  SafeAreaView, StyleSheet, Text } from "react-native"
+import {  Button, SafeAreaView, StyleSheet, Text } from "react-native"
 
 
 
@@ -34,6 +34,7 @@ export const ChatRoom = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text>apapaap</Text>
+      <Button onPress={()=>socket.send("aaaa")}title="aaaa"/>
       
     
     </SafeAreaView>
