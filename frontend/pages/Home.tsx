@@ -19,6 +19,12 @@ export const Home = ({ navigation }: Props) => {
           navigation.navigate("Todo")
         }}
       />
+      <Button
+        title="ChatRoom"
+        onPress={() => {
+          navigation.navigate("ChatRoom")
+        }}
+      />
     </SafeAreaView>
   )
 }

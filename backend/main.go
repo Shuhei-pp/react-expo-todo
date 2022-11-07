@@ -31,5 +31,6 @@ func main() {
 
 	router.POST("/todo",controller.RegistTodo)
 	router.GET("/todo",controller.GetTodos)
+	router.GET("/ws",func(c *gin.Context){controller.ServeWs(c ,c.Writer, c.Request)})
 	router.Run(":8080")
 }
