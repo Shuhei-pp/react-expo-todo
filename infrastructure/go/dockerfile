@@ -1,4 +1,6 @@
 FROM golang:1.17.7-alpine
 RUN apk update && apk add git
+RUN apk --no-cache add make git gcc libtool musl-dev ca-certificates dumb-init
+RUN go install github.com/rubenv/sql-migrate/...@latest
 RUN go get -u github.com/cosmtrek/air
 WORKDIR /go/src

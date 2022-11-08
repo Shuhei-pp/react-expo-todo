@@ -64,20 +64,18 @@ func ServeWs(c *gin.Context, w http.ResponseWriter, r *http.Request) {
 	client := &Client{WebSocket: ws}
 
 	room.AddClient(client)
+	defer room.RemoveClient(client) 
 
 	for {
 		messageType, msg, err := ws.ReadMessage()
 		if err != nil {
-			log.Println(3, err.Error())
+			log.Println(err.Error())
 			break
 		}
 
 		if err = room.publish(messageType, msg); err != nil {
-			log.Println(4, err.Error())
+			log.Println(err.Error())
 			break
 		}
 	}
-
-	room.RemoveClient(client)
-	return
 }

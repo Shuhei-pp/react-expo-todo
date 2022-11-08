@@ -1,0 +1,10 @@
+development:
+    dialect: mysql
+    dir: migrations
+    datasource: test_user:password@db/test_database
+
+production:
+    dialect: postgres
+    dir: migrations/postgres
+    datasource: dbname=myapp sslmode=disable
+    table: migrations
