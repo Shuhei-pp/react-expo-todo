@@ -1,18 +1,41 @@
 
-import { useEffect } from "react"
-import {  Button, SafeAreaView, StyleSheet, Text } from "react-native"
+import { useState } from "react"
+import { GiftedChat } from "react-native-gifted-chat"
 
-
+type Message = 
+  {
+    _id: number,
+    text: string,
+    createdAt: Date,
+    user: 
+    {
+      _id: number,
+      name: string,
+      avatar: string,
+    },
+  }
 
 export const ChatRoom = () => {
+  const [messages,setMessages] = useState<Message[]>(
+    [
+        {
+          _id: 1,
+          text: 'Hello developer',
+          createdAt: new Date(),
+          user: 
+          {
+            _id: 2,
+            name: 'React Native',
+            avatar: 'https://placeimg.com/140/140/any',
+          },
+        },
+    ],)
+
   const socket = new WebSocket("ws://127.0.0.1:8080/ws")
-  useEffect(() => {
-    // const url = "ws://127.0.0.1:8080/ws"
-    // axios.get(url)
-    //   .then((res) => {
-    //   console.log(res)
-    // })
-  }, [])
+
+  const onSend = (message:Message[]) => {
+    setMessages([...messages,...message])
+  }
 
   socket.onopen = () => {
     console.log('Successfully Connected')
@@ -32,26 +55,23 @@ export const ChatRoom = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>apapaap</Text>
-      <Button onPress={()=>socket.send("aaaa")}title="aaaa"/>
-      
-    
-    </SafeAreaView>
+    <GiftedChat
+          messages={messages}
+          placeholder="テキストを入力してください"
+          onSend={message => onSend(message)}
+          user={{
+              _id: 1,
+              name: 'me',
+          }}
+          textInputProps={{
+            borderColor: "white",
+            borderWidth: 1,
+            borderRadius: 10,
+            paddingLeft: 5,
+            paddingTop: 7,
+            backgroundColor: "white"
+          }}
+          // containerStyle={{backgroundColor: 'hsl(0, 0%, 90%)'}}
+        />
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  item: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: "2%",
-    marginBottom: "2%",
-  },
-})
