@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { GiftedChat } from "react-native-gifted-chat"
 
 type Message = 
@@ -29,30 +29,46 @@ export const ChatRoom = () => {
             avatar: 'https://placeimg.com/140/140/any',
           },
         },
-    ],)
+    ],
+  )
+  const webSocketRef= useRef<WebSocket>()
 
-  const socket = new WebSocket("ws://127.0.0.1:8080/ws")
+    
+  useEffect(() => {
+    const socket = new WebSocket("ws://127.0.0.1:8080/ws")
+    webSocketRef.current = socket
+    console.log('Successfully Connected')
+    // webSocketRef.current.send('Hi From the Client!')
+    // socket.onmessage = (event) => {
+    //   console.log(event.data)
+    // }
+
+    return () => socket.close();
+  },[])
 
   const onSend = (message:Message[]) => {
-    setMessages([...messages,...message])
+    setMessages([...message, ...messages])
+    if (webSocketRef.current) {
+      webSocketRef.current.send("aaaaa")
+    }
   }
 
-  socket.onopen = () => {
-    console.log('Successfully Connected')
-    socket.send('Hi From the Client!')
-  }
-  socket.onclose = (event) => {
-    console.log('Socket Closed Connection: ', event)
-    socket.send('Client Closed!')
+  if (webSocketRef.current) {
+    webSocketRef.current.onmessage = () => {
+      console.log('received messages!!')
+    }
   }
 
-  socket.onmessage = (event) => {
-    console.log(event.data)
-  }
+  // socket.onclose = (event) => {
+  //   console.log('Socket Closed Connection: ', event)
+  //   socket.send('Client Closed!')
+  // }
 
-  socket.onerror = (error) => {
-    console.log('Socket Error: ', error)
-  }
+
+  // if (webSocketRef.current)
+  //   webSocketRef.current.onerror = (error) => {
+  //     console.log('Socket Error: ', error)
+  //   }
 
   return (
     <GiftedChat
@@ -71,7 +87,9 @@ export const ChatRoom = () => {
             paddingTop: 7,
             backgroundColor: "white"
           }}
-          // containerStyle={{backgroundColor: 'hsl(0, 0%, 90%)'}}
+          messagesContainerStyle={{
+            backgroundColor: "white"
+          }}
         />
   )
 }

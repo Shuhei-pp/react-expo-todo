@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -14,23 +13,33 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-type Client struct{
+type Client struct {
 	WebSocket *websocket.Conn
 }
 
-type Room struct{
+type Room struct {
 	Clients []*Client
 }
 
-var room =Room{}
+var room = Room{}
 
-func (room *Room)AddClient(client *Client){
+func (room *Room) AddClient(client *Client) {
 	room.Clients = append(room.Clients, client)
 }
 
-func (room *Room)publish(messageType int, msg []byte)error{
-	for _,client := range room.Clients{
-		if err:=client.WebSocket.WriteMessage(messageType, msg);err != nil {
+func (room *Room)RemoveClient(removeClient *Client){
+	var newRoom Room
+	for _, client:= range room.Clients {
+		if client.WebSocket != removeClient.WebSocket{
+			newRoom.Clients = append(newRoom.Clients,client)
+		}
+	}
+	room.Clients = newRoom.Clients
+}
+
+func (room *Room) publish(messageType int, msg []byte) error {
+	for _, client := range room.Clients {
+		if err := client.WebSocket.WriteMessage(messageType, msg); err != nil {
 			return err
 		}
 	}
@@ -40,36 +49,35 @@ func (room *Room)publish(messageType int, msg []byte)error{
 func ServeWs(c *gin.Context, w http.ResponseWriter, r *http.Request) {
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	ws, err := upgrader.Upgrade(w, r, nil)
+	defer ws.Close()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
+		log.Println(1, err.Error())
 		return
 	}
 	log.Println("Client Connected")
 
-	if err = ws.WriteMessage(1, []byte("Hi Client!"));err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
+	if err = ws.WriteMessage(1, []byte("Hi Client!")); err != nil {
+		log.Println(2, err.Error())
+		return
 	}
 
-	client:=&Client{WebSocket: ws}
+	client := &Client{WebSocket: ws}
 
 	room.AddClient(client)
 
 	for {
 		messageType, msg, err := ws.ReadMessage()
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprint(w, err.Error())
+			log.Println(3, err.Error())
 			break
 		}
 
-		if err=room.publish(messageType, msg);err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprint(w, err.Error())
+		if err = room.publish(messageType, msg); err != nil {
+			log.Println(4, err.Error())
 			break
 		}
 	}
-	// defer ws.Close()
+
+	room.RemoveClient(client)
 	return
 }
