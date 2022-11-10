@@ -20,6 +20,18 @@ export const Home = ({ navigation }: Props) => {
         }}
       />
       <Button
+        title="Login"
+        onPress={() => {
+          navigation.navigate("Login")
+        }}
+      />
+      <Button
+        title="Signup"
+        onPress={() => {
+          navigation.navigate("Signup")
+        }}
+      />
+      <Button
         title="ChatRoom"
         onPress={() => {
           navigation.navigate("ChatRoom")
