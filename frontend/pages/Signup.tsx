@@ -1,6 +1,16 @@
-// import { Button, SafeAreaView } from "react-native"
 // Import the functions you need from the SDKs you need
-// import { initializeApp } from "firebase/app";
+import { useState } from "react"
+import { initializeApp } from "firebase/app"
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth"
+import {
+  FIREBASE_API_KEY,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+  FIREBASE_MESSAGE_SENDER_ID,
+  FIREBASE_APP_ID,
+  FIREBASE_MEASUREMENT_ID,
+} from "react-native-dotenv"
 // import { getAnalytics } from "firebase/analytics";
 import {
   FormControl,
@@ -16,21 +26,35 @@ import {
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// const firebaseConfig = {
-//   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-//   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-//   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-//   storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-//   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGE_SENDER_ID,
-//   appId: process.env.REACT_APP_FIREBASE_SENDER_ID,
-//   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
-// };
-
+const firebaseConfig = {
+  apiKey: FIREBASE_API_KEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  projectId:  FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_MESSAGE_SENDER_ID,
+  appId: FIREBASE_APP_ID,
+  measurementId: FIREBASE_MEASUREMENT_ID
+}
 // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+
 // const analytics = getAnalytics(app);
 
 export const Signup = () => {
+  const [email, setEmail] = useState<string>("")
+  const [password, setPassword] = useState<string>("")
+  const [confirmPassword, setConfirmPassword] = useState<string>("")
+
+  const handleSubmit = () => {
+    createUserWithEmailAndPassword(auth, email, password).then(
+      (userCredential) => {
+        const user = userCredential.user
+        console.log(user)
+        console.log(auth.currentUser)
+      }
+    )
+  }
   return (
     <Center w="100%">
       <Box safeArea p="2" w="90%" maxW="290" py="8">
@@ -58,17 +82,25 @@ export const Signup = () => {
         <VStack space={3} mt="5">
           <FormControl>
             <FormControl.Label>Email</FormControl.Label>
-            <Input />
+            <Input onChangeText={(e) => setEmail(e)} value={email} />
           </FormControl>
           <FormControl>
             <FormControl.Label>Password</FormControl.Label>
-            <Input type="password" />
+            <Input
+              type="password"
+              onChangeText={(e) => setPassword(e)}
+              value={password}
+            />
           </FormControl>
           <FormControl>
             <FormControl.Label>Confirm Password</FormControl.Label>
-            <Input type="password" />
+            <Input
+              type="password"
+              onChangeText={(e) => setConfirmPassword(e)}
+              value={confirmPassword}
+            />
           </FormControl>
-          <Button mt="2" colorScheme="indigo">
+          <Button mt="2" colorScheme="indigo" onPress={handleSubmit}>
             Sign up
           </Button>
         </VStack>
