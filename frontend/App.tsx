@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import {  NativeBaseProvider } from "native-base"
+import { NativeBaseProvider } from "native-base"
 
 import React from "react"
 import { Button } from "native-base"
@@ -39,10 +39,10 @@ export default function App() {
             component={Login}
             options={{
               headerRight: () => (
-                <Button mt="2" colorScheme="indigo" onPress={Logout}>
+                <Button p="2" colorScheme="indigo" onPress={Logout}>
                   ログアウト
                 </Button>
-              )
+              ),
             }}
           />
           <Stack.Screen name="Signup" component={Signup} />

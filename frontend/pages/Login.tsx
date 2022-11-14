@@ -1,5 +1,4 @@
-
-import {  signInWithEmailAndPassword } from "firebase/auth"
+import { signInWithEmailAndPassword } from "firebase/auth"
 import { useState } from "react"
 import {
   FormControl,
@@ -15,16 +14,20 @@ import {
 } from "native-base"
 import { firebaseAuth } from "../utils/firebase"
 
-export const Login = () => {
+// TODO:
+export const Login = ({ navigation: { navigate } }: { navigation: any }) => {
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
 
   const handleSubmit = () => {
-    signInWithEmailAndPassword(firebaseAuth, email, password).then((userCredential) => {
-      const user = userCredential.user
-      console.log(user)
-    })
-    console.log(111)
+    signInWithEmailAndPassword(firebaseAuth, email, password)
+      .then(() => {
+        navigate("ChatRoom")
+      })
+      .catch((err) => {
+        console.log(err)
+        window.alert("メールアドレス、パスワードが違います")
+      })
   }
 
   return (

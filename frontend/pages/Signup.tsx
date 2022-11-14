@@ -17,16 +17,25 @@ export const Signup = () => {
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [confirmPassword, setConfirmPassword] = useState<string>("")
-  console.log(firebaseAuth.currentUser)
 
   const handleSubmit = () => {
-    createUserWithEmailAndPassword(firebaseAuth, email, password).then(
-      (userCredential) => {
+    if (password !== confirmPassword) {
+      window.alert("確認用のパスワードが違います")
+      return
+    }
+    if (password.length >= 6) {
+      window.alert("パスワードは6文字以上にしてください")
+      return
+    }
+    createUserWithEmailAndPassword(firebaseAuth, email, password)
+      .then((userCredential) => {
         const user = userCredential.user
         console.log(user)
-        console.log(firebaseAuth.currentUser)
-      }
-    )
+      })
+      .catch((err) => {
+        window.alert("使用できないメールアドレス、パスワードです")
+        console.log(err)
+      })
   }
   return (
     <Center w="100%">
