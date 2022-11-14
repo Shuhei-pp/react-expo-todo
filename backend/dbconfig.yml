@@ -1,7 +1,7 @@
 development:
     dialect: mysql
     dir: migrations
-    datasource: test_user:password@db/test_database
+    datasource: test_user:password@(db:3306)/test_database?parseTime=true
 
 production:
     dialect: postgres
