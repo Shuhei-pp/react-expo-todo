@@ -33,7 +33,7 @@ func RegistTodo(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, 111111)
+	c.JSON(http.StatusOK, "ok")
 }
 
 func GetTodos(c *gin.Context) {
