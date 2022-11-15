@@ -1,5 +1,5 @@
 import { signInWithEmailAndPassword } from "firebase/auth"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import {
   FormControl,
   Input,
@@ -13,16 +13,21 @@ import {
   Text,
 } from "native-base"
 import { firebaseAuth } from "../utils/firebase"
+import { userContext } from "../App"
 
 // TODO:
 export const Login = ({ navigation: { navigate } }: { navigation: any }) => {
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
+  const resorceUserContext = useContext(userContext)
 
   const handleSubmit = () => {
     signInWithEmailAndPassword(firebaseAuth, email, password)
-      .then(() => {
-        navigate("ChatRoom")
+      .then((userCredential) => {
+        if (resorceUserContext) {
+          resorceUserContext.setLoginUser(userCredential.user)
+          navigate("ChatRoom")
+        }
       })
       .catch((err) => {
         console.log(err)

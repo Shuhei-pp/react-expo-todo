@@ -11,7 +11,7 @@ import (
 
 type Message struct {
 	Id         int    `json:"id"`
-	UserId     int    `json:"user_id"`
+	UserId     string    `json:"user_id"`
 	Content    string `json:"content"`
 	created_at time.Time
 }

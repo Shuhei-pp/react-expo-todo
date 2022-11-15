@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from "react"
+import axios from "axios"
+import { useContext, useEffect, useRef, useState } from "react"
 import { GiftedChat } from "react-native-gifted-chat"
+import { userContext } from "../App"
 
 type Message = {
   _id: number
@@ -25,9 +27,12 @@ export const ChatRoom = () => {
       },
     },
   ])
+  
   const webSocketRef = useRef<WebSocket>()
+  const resorceUserContext = useContext(userContext)
 
   useEffect(() => {
+    // TODO: url env
     const socket = new WebSocket("ws://127.0.0.1:8080/ws")
     webSocketRef.current = socket
     console.log("Successfully Connected")
@@ -40,6 +45,12 @@ export const ChatRoom = () => {
   }, [])
 
   const onSend = (message: Message[]) => {
+    const url = "http://127.0.0.1:8080/message"
+    axios.post(url, {
+      user_id:resorceUserContext?.loginUser?.uid,
+      content:message[message.length-1].text
+    })
+
     setMessages([...message, ...messages])
     if (webSocketRef.current) {
       webSocketRef.current.send("message")
