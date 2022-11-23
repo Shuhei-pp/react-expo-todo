@@ -34,6 +34,7 @@ func main() {
 	router.POST("/message",controller.SaveMessage)
 	router.GET("/messages",controller.GetMessages)
 	router.POST("/api/cokkie",controller.SetCokkie)
+	router.GET("/api/user/:id",controller.GetUser)
 	router.GET("/ws",func(c *gin.Context){controller.ServeWs(c ,c.Writer, c.Request)})
 	router.Run(":8080")
 }

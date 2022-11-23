@@ -12,6 +12,7 @@ import { Signup } from "./pages/Signup"
 import { Todo } from "./pages/Todo"
 import { User } from "firebase/auth"
 import { firebaseAuth } from "./utils/firebase"
+import axios from "axios"
 
 export type RootStackParamList = {
   Home: undefined
@@ -36,6 +37,16 @@ export default function App() {
   useEffect(() => {
     if (firebaseAuth.currentUser) setLoginUser(firebaseAuth.currentUser)
   }, [])
+
+  const getUserInfo = () => {
+    const user = loginUser
+    const url = "http://127.0.0.1:8080/api/user/" + user?.uid
+
+    axios.get(url).then((res) => {
+      console.log(res)
+    })
+  }
+
   return (
     <userContext.Provider value={{ loginUser, setLoginUser }}>
       <NativeBaseProvider>
@@ -48,9 +59,14 @@ export default function App() {
               component={Login}
               options={{
                 headerRight: () => (
-                  <Button p="2" colorScheme="indigo" onPress={Logout}>
-                    ログアウト
-                  </Button>
+                  <>
+                    <Button p="2" colorScheme="indigo" onPress={getUserInfo}>
+                      until
+                    </Button>
+                    <Button p="2" colorScheme="indigo" onPress={Logout}>
+                      ログアウト
+                    </Button>
+                  </>
                 ),
               }}
             />

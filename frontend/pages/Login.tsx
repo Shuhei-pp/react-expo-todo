@@ -26,7 +26,6 @@ export const Login = ({ navigation: { navigate } }: { navigation: any }) => {
       .then((userCredential) => {
         if (resorceUserContext) {
           resorceUserContext.setLoginUser(userCredential.user)
-          console.log(userCredential.user)
           // navigate("ChatRoom")
         }
       })
