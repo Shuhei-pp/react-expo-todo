@@ -27,6 +27,7 @@ export const Todo = () => {
   const [todos, setTodos] = useState<TypeTodo[]>([])
   const [isLoading, setIsLoading] =useState<boolean>(true)
   const handleSubmit = () => {
+    // TODO: constant
     const url = "http://127.0.0.1:8080/todo"
     const entityTodos = todos
     entityTodos.push({ text })
@@ -46,6 +47,7 @@ export const Todo = () => {
   }, [])
   
 
+    // TODO: isLoading
   return (
   <>
     {

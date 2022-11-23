@@ -45,8 +45,10 @@ export const ChatRoom = () => {
   }, [])
 
   const onSend = (message: Message[]) => {
+    // TODO: constant
     const url = "http://127.0.0.1:8080/message"
     axios.post(url, {
+      // TODO: ?使わず
       user_id:resorceUserContext?.loginUser?.uid,
       content:message[message.length-1].text
     })

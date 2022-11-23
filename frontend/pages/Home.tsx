@@ -9,6 +9,7 @@ type Props = {
   navigation: DetailScreenNavigationProp
 }
 
+    // TODO:  props
 export const Home = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={styles.container}>

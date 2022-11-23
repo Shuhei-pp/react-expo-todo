@@ -15,7 +15,7 @@ import {
 import { firebaseAuth } from "../utils/firebase"
 import { userContext } from "../App"
 
-// TODO:
+// TODO: props
 export const Login = ({ navigation: { navigate } }: { navigation: any }) => {
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
@@ -26,7 +26,8 @@ export const Login = ({ navigation: { navigate } }: { navigation: any }) => {
       .then((userCredential) => {
         if (resorceUserContext) {
           resorceUserContext.setLoginUser(userCredential.user)
-          navigate("ChatRoom")
+          console.log(userCredential.user)
+          // navigate("ChatRoom")
         }
       })
       .catch((err) => {
