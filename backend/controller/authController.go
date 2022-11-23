@@ -15,7 +15,7 @@ type Cokkie struct {
 	Token  string `json:"token"`
 }
 
-func SetCokkie(c *gin.Context) {
+func SetCookie(c *gin.Context) {
 	var cokkie Cokkie
 
 	if err := c.ShouldBindJSON(&cokkie); err != nil {
@@ -52,4 +52,8 @@ func GetUser(c *gin.Context){
 
 c.JSON(http.StatusOK,user)
 
+}
+
+func GetAuthUser (c *gin.Context){
+	
 }

@@ -14,6 +14,7 @@ import {
 } from "native-base"
 import { firebaseAuth } from "../utils/firebase"
 import { userContext } from "../App"
+import storage from "../utils/storage"
 
 // TODO: props
 export const Login = ({ navigation: { navigate } }: { navigation: any }) => {
@@ -26,7 +27,13 @@ export const Login = ({ navigation: { navigate } }: { navigation: any }) => {
       .then((userCredential) => {
         if (resorceUserContext) {
           resorceUserContext.setLoginUser(userCredential.user)
-          // navigate("ChatRoom")
+          storage.save({
+            key: "loginState",
+            data: {
+              userid: userCredential.user.uid,
+            }
+          })
+          navigate("ChatRoom")
         }
       })
       .catch((err) => {

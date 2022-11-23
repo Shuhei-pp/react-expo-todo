@@ -1,4 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native"
+import { NavigationContainer, useNavigationContainerRef } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { NativeBaseProvider } from "native-base"
 
@@ -10,9 +10,9 @@ import { Login } from "./pages/Login"
 import { Logout } from "./pages/Logout"
 import { Signup } from "./pages/Signup"
 import { Todo } from "./pages/Todo"
-import { User } from "firebase/auth"
-import { firebaseAuth } from "./utils/firebase"
+import { getAuth, onAuthStateChanged, User } from "firebase/auth"
 import axios from "axios"
+import storage from "./utils/storage"
 
 export type RootStackParamList = {
   Home: undefined
@@ -35,7 +35,28 @@ export default function App() {
   const [loginUser, setLoginUser] = useState<User>()
 
   useEffect(() => {
-    if (firebaseAuth.currentUser) setLoginUser(firebaseAuth.currentUser)
+    const auth = getAuth()
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setLoginUser(user)
+      } else {
+        storage
+          .load({
+            key: "loginState",
+          })
+          .then((res) => {
+            const url = "http://127.0.0.1:8080/api/user/" + res.userid
+    
+            axios.get(url).then((res) => {
+              console.log(res.data)
+            })
+          }).catch((err) => {
+            console.log(err)
+            // navigate
+          })
+        console.log(222)
+      }
+    })
   }, [])
 
   const getUserInfo = () => {
