@@ -14,7 +14,7 @@ type Message = {
   }
 }
 
-export const ChatRoom = () => {
+export const ChatRoom = ({ navigation: { navigate } }: { navigation: any }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       _id: 1,
@@ -31,7 +31,11 @@ export const ChatRoom = () => {
   const webSocketRef = useRef<WebSocket>()
   const resorceUserContext = useContext(userContext)
 
+
   useEffect(() => {
+    if (resorceUserContext?.loginUser) {
+      navigate("Login")
+    }
     // TODO: url env
     const socket = new WebSocket("ws://127.0.0.1:8080/ws")
     webSocketRef.current = socket
@@ -54,14 +58,23 @@ export const ChatRoom = () => {
     })
 
     setMessages([...message, ...messages])
+
+    const wsMessageSignal = {
+      status: 1,
+      message_content:message
+    }
+
+    const jsonMessage = JSON.stringify(wsMessageSignal)
     if (webSocketRef.current) {
-      webSocketRef.current.send("message")
+      webSocketRef.current.send(jsonMessage)
     }
   }
 
   if (webSocketRef.current) {
-    webSocketRef.current.onmessage = () => {
-      console.log("received messages!!")
+    webSocketRef.current.onmessage = (res) => {
+      const jsonMessage = JSON.parse(res.data)
+      console.log(jsonMessage)
+      setMessages([...jsonMessage.message_content, ...messages])
     }
   }
 
@@ -72,7 +85,7 @@ export const ChatRoom = () => {
       onSend={(message) => onSend(message)}
       user={{
         _id: 1,
-        name: "me",
+        name: resorceUserContext?.loginUser?.uid,
       }}
       textInputProps={{
         borderColor: "white",

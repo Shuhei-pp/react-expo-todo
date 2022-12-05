@@ -37,11 +37,13 @@ func (room *Room)RemoveClient(removeClient *Client){
 	room.Clients = newRoom.Clients
 }
 
-func (room *Room) publish(messageType int, msg []byte) error {
+func (room *Room) publish(messageType int, msg []byte,sendClient *Client) error {
 	for _, client := range room.Clients {
+		if sendClient != client{
+			log.Println(1111111)
 		if err := client.WebSocket.WriteMessage(messageType, msg); err != nil {
 			return err
-		}
+		}}
 	}
 	return nil
 }
@@ -56,15 +58,11 @@ func ServeWs(c *gin.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("Client Connected")
 
-	if err = ws.WriteMessage(1, []byte("Hi Client!")); err != nil {
-		log.Println(2, err.Error())
-		return
-	}
-
 	client := &Client{WebSocket: ws}
 
 	room.AddClient(client)
 	defer room.RemoveClient(client) 
+	log.Println(room)
 
 	for {
 		messageType, msg, err := ws.ReadMessage()
@@ -73,7 +71,8 @@ func ServeWs(c *gin.Context, w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		if err = room.publish(messageType, msg); err != nil {
+		log.Println(room)
+		if err = room.publish(messageType, msg,client); err != nil {
 			log.Println(err.Error())
 			break
 		}

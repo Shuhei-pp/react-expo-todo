@@ -1,4 +1,4 @@
-import { NavigationContainer, useNavigationContainerRef } from "@react-navigation/native"
+import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { NativeBaseProvider } from "native-base"
 
@@ -12,7 +12,8 @@ import { Signup } from "./pages/Signup"
 import { Todo } from "./pages/Todo"
 import { getAuth, onAuthStateChanged, User } from "firebase/auth"
 import axios from "axios"
-import storage from "./utils/storage"
+import { ActivityIndicator } from "react-native"
+// import storage from "./utils/storage"
 
 export type RootStackParamList = {
   Home: undefined
@@ -33,6 +34,7 @@ export const userContext = createContext<TypeUserContext | undefined>(undefined)
 
 export default function App() {
   const [loginUser, setLoginUser] = useState<User>()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const auth = getAuth()
@@ -40,22 +42,24 @@ export default function App() {
       if (user) {
         setLoginUser(user)
       } else {
-        storage
-          .load({
-            key: "loginState",
-          })
-          .then((res) => {
-            const url = "http://127.0.0.1:8080/api/user/" + res.userid
-    
-            axios.get(url).then((res) => {
-              console.log(res.data)
-            })
-          }).catch((err) => {
-            console.log(err)
-            // navigate
-          })
-        console.log(222)
+        // storage
+        //   .load({
+        //     key: "loginState",
+        //   })
+        //   .then((res) => {
+        //     console.log(res.data)
+        //     const url = "http://127.0.0.1:8080/api/user/" + res.userid
+        //     axios.get(url).then((res) => {
+        //       console.log(res.data)
+        //       console.log(222)
+        //     })
+        //   }).catch((err) => {
+        //     console.log(err)
+        // navigate
+        //   })
+        // }
       }
+      setIsLoading(false)
     })
   }, [])
 
@@ -68,6 +72,11 @@ export default function App() {
     })
   }
 
+  if (isLoading) {
+    return (
+        <ActivityIndicator animating={true} color="#0000aa" size="large" />
+    )
+  }
   return (
     <userContext.Provider value={{ loginUser, setLoginUser }}>
       <NativeBaseProvider>
